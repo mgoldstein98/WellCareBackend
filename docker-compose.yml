@@ -1,29 +1,19 @@
-#this file creates three containters 
-#each service: web, database, hapi
-#contains the commands for starting the commands. 
 version: '3' 
 services: #keyword
-  web:
-    image: node:alpine
-    build: .
-    environment:
-      - NODE_ENV = production
-    volumes:
-      - ./:/home/node/app
-    ports:
-      - 6000:6000 
-    links: 
-    - database
+  # web:
+  #   build: .
+  #   ports:
+  #     - 5000:4000
   database:
-    image: mysql:latest
-    restart: always 
-    volumes: 
-      - database_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: abc123
-      MYSQL_DATABASE: xyz
-      MYSQL_USER: USR
-      MYSQL_PASSWORD: abc123
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-volumes: 
-  database_data:
+      image: mysql:latest
+      restart: always 
+      volumes: 
+        - database_data:/var/lib/mysql
+      environment:
+        MYSQL_ROOT_PASSWORD: abc123
+        MYSQL_DATABASE: xyz
+        MYSQL_USER: USR
+        MYSQL_PASSWORD: abc123
+        MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+  volumes: 
+    database_data:
