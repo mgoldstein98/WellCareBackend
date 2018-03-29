@@ -13,7 +13,7 @@ services: #keyword
       #   - database_data:/var/lib/mysql
       environment:
         MYSQL_ROOT_PASSWORD: abc123
-        MYSQL_DATABASE: xyz
+        MYSQL_DATABASE: WellcareDB
         MYSQL_USER: USR
         MYSQL_PASSWORD: abc123
         MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
