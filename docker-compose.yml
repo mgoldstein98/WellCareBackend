@@ -1,19 +1,21 @@
 version: '3' 
 services: #keyword
-  # web:
-  #   build: .
-  #   ports:
-  #     - 5000:4000
+  web:
+    build: .
+    ports:
+      - 5000:4000
   database:
       image: mysql:latest
       restart: always 
-      volumes: 
-        - database_data:/var/lib/mysql
+      ports:
+        - 3306:3306
+      # volumes: 
+      #   - database_data:/var/lib/mysql
       environment:
         MYSQL_ROOT_PASSWORD: abc123
         MYSQL_DATABASE: xyz
         MYSQL_USER: USR
         MYSQL_PASSWORD: abc123
         MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-  volumes: 
-    database_data:
+  # volumes: 
+  #   database_data:
