@@ -10,10 +10,10 @@ var mysql = require('mysql');
 
 var mysqlCon = mysql.createConnection({
     //host will be the name of the service from the docker-compose file.
-    host     : 'mysql',
+    host     : 'database',
     user     : 'USR',
     password : 'abc123',
-    database : 'cse3330'
+    database : 'WellcareDB'
 });
 
 // server.route({
@@ -26,25 +26,25 @@ var mysqlCon = mysql.createConnection({
 
 
 
-const start = async () => {
+// const start = async () => {
 
-  await server.register(require('inert'));
+//   await server.register(require('inert'));
 
-  server.route({
-      method: 'GET',
-      path: '/picture',
-      handler: function (request, h) {
+//   server.route({
+//       method: 'GET',
+//       path: '/picture',
+//       handler: function (request, h) {
 
-          return h.file('picture.jpg');
-      }
-  });
+//           return h.file('picture.jpg');
+//       }
+//   });
 
-  await server.start();
+//   await server.start();
 
-  console.log('Server running at:', server.info.uri);
-};
+//   console.log('Server running at:', server.info.uri);
+// };
 
-start();
+// start();
 
 
 
@@ -78,8 +78,27 @@ server.route({
 });
 
 
+server.route({
+  method: 'GET',
+  path: '/user/data',
+  handler: function(request, reply){
+    
+    mysqlCon.connect(function(err) {
+      if (err) throw err;
+      
+      mysqlCon.query("SELECT FirstName FROM User", function (err, result) {
+        var name = result[0].FirstName;
+        if (err) throw err;
+        console.log(name);
+
+      });
+    });
+    return("WORKED IN LOGS, CANT RETURN VALUE");
+  }
+});
+
 server
   .start()
   .catch(err => {
     console.log(err);
-  })
+})
