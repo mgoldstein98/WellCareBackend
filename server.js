@@ -1,8 +1,54 @@
 'use strict';
 
 const Hapi = require('hapi');
+// const Intert = require('inert');
+const Path = require('path');
 
 const server = new Hapi.Server({ host: '0.0.0.0', port: 4000 });
+
+var mysql = require('mysql');
+
+var mysqlCon = mysql.createConnection({
+    //host will be the name of the service from the docker-compose file.
+    host     : 'mysql',
+    user     : 'USR',
+    password : 'abc123',
+    database : 'cse3330'
+});
+
+// server.route({
+//   method: 'GET',
+//   path: '/picture',
+//   handler: {
+//       file: 'picture.jpg'
+//   }
+// });
+
+
+
+const start = async () => {
+
+  await server.register(require('inert'));
+
+  server.route({
+      method: 'GET',
+      path: '/picture',
+      handler: function (request, h) {
+
+          return h.file('picture.jpg');
+      }
+  });
+
+  await server.start();
+
+  console.log('Server running at:', server.info.uri);
+};
+
+start();
+
+
+
+
 
 server.route({
  method: 'GET',
@@ -15,30 +61,25 @@ server.route({
 
 server.route({
  method: 'GET',
- path: '/{name}',
+ path: '/user/{name}',
  handler: function (request, reply) {
     return('Hello, ' + encodeURIComponent(request.params.name) + '!');
     // return 'hey'
  }
 });
 
+server.route({
+  method: 'POST',
+  path: '/user',
+  handler: function(request, reply) {
+    return ('User Added: ' + request.payload['lName'] + ', '
+    + request.payload['fName']);
+  }
+});
 
-server  
+
+server
   .start()
   .catch(err => {
     console.log(err);
   })
-
-// server.start((err) => {
-// if (err) {
-//  throw err;
-//  }
-//  console.log(`Server running at: ${server.info.uri}`);
-//  //return 'hey'
-// });
-
-// process.on('unhandledRejection', (reason, p) => {
-//       console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-
-      // application specific logging, throwing an error, or other logic here
-// });

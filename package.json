@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "hapi": "^17.2.3"
+    "hapi": "^17.2.3",
+    "inert": "^5.1.0",
+    "mysql": "^2.15.0",
+    "nodemon": "^1.17.3"
   }
 }
