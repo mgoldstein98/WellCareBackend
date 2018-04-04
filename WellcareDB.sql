@@ -14,7 +14,6 @@ USE WellcareDB;
 );
 
 INSERT INTO User(UserId, Password, FirstName, LastName, Email, Gender, HomeAddress)
-	VALUES(1, 'abc123', 'Sterling', 'Conner', 'jSmith@gmail.com', 'Female', '123 Main st.');
+	VALUES(1, 'abc123', 'Max', 'Gold', 'jSmith@gmail.com', 'Male', '123 Main st.');
 
 SELECT * from User;
-
