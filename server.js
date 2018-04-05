@@ -82,27 +82,20 @@ server.route({
 server.route({
   method: 'GET',
   path: '/user/data',
-  handler: async function(request, h){
-    //var name = '';
-    
-   // mysqlCon.connect();
-    //mysqlCon.connect(function(err) {
-      //if (err) throw err;
+  handler: function(request, h){
+
       return new Promise(function(resolve, reject){
+        
       mysqlCon.query("SELECT * FROM User", function (error, results, fields) {
+
         if (error) throw error;
 
-    
-        var name = results[0].FirstName;
-        console.log(name); 
+        console.log(results); 
 
         resolve(h.response(results));
+
       })
     });
-   
-   // return('Welcome to wellcare: ' + name);
-    //return reply('Welcome to wellcare: ' + results[0].FirstName);
-    //mysqlCon.end();
   }
 });
 
