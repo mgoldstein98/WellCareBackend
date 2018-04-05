@@ -8,6 +8,7 @@ const server = new Hapi.Server({ host: '0.0.0.0', port: 4000 });
 
 var mysql = require('mysql');
 
+
 var mysqlCon = mysql.createConnection({
     //host will be the name of the service from the docker-compose file.
     host     : 'database',
@@ -48,7 +49,7 @@ var mysqlCon = mysql.createConnection({
 
 
 
-
+//internals.init();
 
 server.route({
  method: 'GET',
@@ -81,19 +82,27 @@ server.route({
 server.route({
   method: 'GET',
   path: '/user/data',
-  handler: function(request, reply){
+  handler: async function(request, h){
+    //var name = '';
     
-    mysqlCon.connect(function(err) {
-      if (err) throw err;
-      
-      mysqlCon.query("SELECT FirstName FROM User", function (err, result) {
-        var name = result[0].FirstName;
-        if (err) throw err;
-        console.log(name);
+   // mysqlCon.connect();
+    //mysqlCon.connect(function(err) {
+      //if (err) throw err;
+      return new Promise(function(resolve, reject){
+      mysqlCon.query("SELECT * FROM User", function (error, results, fields) {
+        if (error) throw error;
 
-      });
+    
+        var name = results[0].FirstName;
+        console.log(name); 
+
+        resolve(h.response(results));
+      })
     });
-    return("WORKED IN LOGS, CANT RETURN VALUE");
+   
+   // return('Welcome to wellcare: ' + name);
+    //return reply('Welcome to wellcare: ' + results[0].FirstName);
+    //mysqlCon.end();
   }
 });
 
