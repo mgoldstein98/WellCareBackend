@@ -16,7 +16,6 @@ var mysqlCon = mysql.createConnection({
     database : 'WellcareDB'
 });
 
-
 // server.route({
 //   method: 'GET',
 //   path: '/picture',
@@ -26,24 +25,25 @@ var mysqlCon = mysql.createConnection({
 // });
 
 
+
 // const start = async () => {
-//
+
 //   await server.register(require('inert'));
-//
+
 //   server.route({
 //       method: 'GET',
 //       path: '/picture',
 //       handler: function (request, h) {
-//
+
 //           return h.file('picture.jpg');
 //       }
 //   });
-//
+
 //   await server.start();
-//
+
 //   console.log('Server running at:', server.info.uri);
 // };
-//
+
 // start();
 
 
@@ -61,7 +61,7 @@ server.route({
 
 server.route({
  method: 'GET',
- path: '/{name}',
+ path: '/user/{name}',
  handler: function (request, reply) {
     return('Hello, ' + encodeURIComponent(request.params.name) + '!');
     // return 'hey'
@@ -72,50 +72,33 @@ server.route({
   method: 'POST',
   path: '/user',
   handler: function(request, reply) {
-    // mysqlCon.connect();
-    // mysqlCon.query('INSERT INTO User VALUES(2, "abc123", "It", "Worked", "jSmith@gmail.com", "Male", "123 Main st.")', function (error, results, fields) {
-    //   if (error)
-    //     throw error;
-    //   return ('Successfully inserted');
-
-    const UserId = request.payload.UserId;
-    const Password = request.payload.Password;
-    const FirstName = request.payload.FirstName;
-    const LastName = request.payload.LastName;
-    const Email = request.payload.Email;
-    const Gender = request.payload.Gender;
-    const HomeAddress = request.payload.HomeAddress;
-
-    mysqlCon.connect(function(err) {
-      if (err) throw err;
-      console.log("Connected!");
-    //  var sql = 'INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES("' + UserId + '","' + Password + '","' + FirstName + '","' + LastName + '","' + Email + '","' + Gender + '","' + HomeAddress + '")';
-      mysqlCon.query('INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES (' + UserId + "," + Password + "," + FirstName + "," + LastName + "," + Email + "," + Gender + "," + HomeAddress + ')',
-      function (err, result) {
-        if (err) throw err;
-        console.log(results);
-        // console.log("1 record inserted");
-      });
-    });
-    return (results);
-
-
-
-
-    // });
-
-
-    // mysqlCon.end();
-
-
-    // return ('User Added: ' + request.payload['lName'] + ', '
-    // + request.payload['fName']);
+    return ('User Added: ' + request.payload['lName'] + ', '
+    + request.payload['fName']);
   }
 });
 
+
+server.route({
+  method: 'GET',
+  path: '/user/data',
+  handler: function(request, reply){
+    
+    mysqlCon.connect(function(err) {
+      if (err) throw err;
+      
+      mysqlCon.query("SELECT FirstName FROM User", function (err, result) {
+        var name = result[0].FirstName;
+        if (err) throw err;
+        console.log(name);
+
+      });
+    });
+    return("WORKED IN LOGS, CANT RETURN VALUE");
+  }
+});
 
 server
   .start()
   .catch(err => {
     console.log(err);
-  })
+})
