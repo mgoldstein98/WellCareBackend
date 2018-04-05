@@ -70,13 +70,17 @@ server.route({
 
 server.route({
   method: 'POST',
-  path: '/user',
+  path: '/post',
   handler: function(request, reply) {
     // mysqlCon.connect();
     // mysqlCon.query('INSERT INTO User VALUES(2, "abc123", "It", "Worked", "jSmith@gmail.com", "Male", "123 Main st.")', function (error, results, fields) {
     //   if (error)
     //     throw error;
     //   return ('Successfully inserted');
+
+    // return('made it here');
+
+
 
     const UserId = request.payload.UserId;
     const Password = request.payload.Password;
@@ -86,30 +90,23 @@ server.route({
     const Gender = request.payload.Gender;
     const HomeAddress = request.payload.HomeAddress;
 
+    // console.log(UserId, Password, FirstName, LastName, Email, Gender, HomeAddress);
+    // var str = "" + UserId + ',' + Password + ',' + FirstName + ',' + LastName + ',' + Email + ',' + Gender + ',' + HomeAddress;
+    // return(str);
+
+    // return(sql);
+
     mysqlCon.connect(function(err) {
       if (err) throw err;
-      console.log("Connected!");
-    //  var sql = 'INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES("' + UserId + '","' + Password + '","' + FirstName + '","' + LastName + '","' + Email + '","' + Gender + '","' + HomeAddress + '")';
-      mysqlCon.query('INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES (' + UserId + "," + Password + "," + FirstName + "," + LastName + "," + Email + "," + Gender + "," + HomeAddress + ')',
-      function (err, result) {
+      var sql = 'INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES(' + UserId + ',' + "'" + Password + "'" + ','
+      + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Email + "'" + ',' + "'" + Gender + "'" + ',' + "'" + HomeAddress + "'" + ')';
+      mysqlCon.query(sql, function (err, result) {
         if (err) throw err;
-        console.log(results);
+        console.log(result);
         // console.log("1 record inserted");
       });
     });
-    return (results);
-
-
-
-
-    // });
-
-
-    // mysqlCon.end();
-
-
-    // return ('User Added: ' + request.payload['lName'] + ', '
-    // + request.payload['fName']);
+    return('yeet');
   }
 });
 
