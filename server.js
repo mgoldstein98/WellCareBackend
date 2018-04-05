@@ -26,28 +26,8 @@ var mysqlCon = mysql.createConnection({
 // });
 
 
-// const start = async () => {
-//
-//   await server.register(require('inert'));
-//
-//   server.route({
-//       method: 'GET',
-//       path: '/picture',
-//       handler: function (request, h) {
-//
-//           return h.file('picture.jpg');
-//       }
-//   });
-//
-//   await server.start();
-//
-//   console.log('Server running at:', server.info.uri);
-// };
-//
-// start();
-
-
-
+// Mock up minimum of 10 endpoints in postman, mixture of get and post
+// 
 
 
 server.route({
@@ -59,28 +39,19 @@ server.route({
  }
 });
 
-server.route({
- method: 'GET',
- path: '/{name}',
- handler: function (request, reply) {
-    return('Hello, ' + encodeURIComponent(request.params.name) + '!');
-    // return 'hey'
- }
-});
+// server.route({
+//  method: 'GET',
+//  path: '/{name}',
+//  handler: function (request, reply) {
+//     return('Hello, ' + encodeURIComponent(request.params.name) + '!');
+//     // return 'hey'
+//  }
+// });
 
 server.route({
   method: 'POST',
-  path: '/post',
+  path: '/createaccount',
   handler: function(request, reply) {
-    // mysqlCon.connect();
-    // mysqlCon.query('INSERT INTO User VALUES(2, "abc123", "It", "Worked", "jSmith@gmail.com", "Male", "123 Main st.")', function (error, results, fields) {
-    //   if (error)
-    //     throw error;
-    //   return ('Successfully inserted');
-
-    // return('made it here');
-
-
 
     const UserId = request.payload.UserId;
     const Password = request.payload.Password;
@@ -90,23 +61,64 @@ server.route({
     const Gender = request.payload.Gender;
     const HomeAddress = request.payload.HomeAddress;
 
-    // console.log(UserId, Password, FirstName, LastName, Email, Gender, HomeAddress);
-    // var str = "" + UserId + ',' + Password + ',' + FirstName + ',' + LastName + ',' + Email + ',' + Gender + ',' + HomeAddress;
-    // return(str);
-
-    // return(sql);
-
-    mysqlCon.connect(function(err) {
-      if (err) throw err;
+    return new Promise(function(resolve, reject) {
       var sql = 'INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES(' + UserId + ',' + "'" + Password + "'" + ','
       + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Email + "'" + ',' + "'" + Gender + "'" + ',' + "'" + HomeAddress + "'" + ')';
       mysqlCon.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+        else {
         console.log(result);
-        // console.log("1 record inserted");
+        resolve(reply.response(result));
+        }
       });
     });
-    return('yeet');
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/login',
+  handler: function(request, h) {
+    return new Promise(function(resolve, reject) {
+
+      resolve(h.response("User added"));
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/changepassword',
+  handler: function(request, h) {
+    return new Promise(function(resolve, reject) {
+
+      resolve(h.response("User added"));
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/doctor',
+  handler: function(request, h) {
+    return new Promise(function(resolve, reject) {
+
+      resolve(h.response("User added"));
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/HIPPA',
+  handler: function(request, h) {
+    return new Promise(function(resolve, reject) {
+
+      resolve(h.response("User added"));
+    });
   }
 });
 
