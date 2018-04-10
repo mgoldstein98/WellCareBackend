@@ -166,8 +166,7 @@ server.route({
   path: '/login',
   handler: function(request, h) {
     return new Promise(function(resolve, reject) {
-
-      resolve(h.response("User added"));
+      resolve(h.response("User log-in"));
     });
   }
 });
@@ -177,7 +176,6 @@ server.route({
   path: '/changepassword',
   handler: function(request, h) {
     return new Promise(function(resolve, reject) {
-
       resolve(h.response("User added"));
     });
   }
