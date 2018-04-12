@@ -29,20 +29,44 @@ server.route({
 //Route For Specific User account 
 server.route({
  method: 'GET',
- path: '/account/user/{name}',
+ path: '/account/user/name',
+
+ //returns welcome message and user's first name from Database
  handler: function (request, reply) {
-    return('Hello, ' + encodeURIComponent(request.params.name) + '!');
-    // return 'hey'
+  return new Promise(function(resolve, reject){
+
+    mysqlCon.query("SELECT FirstName FROM User", function (error, results, fields) {
+
+      
+
+      console.log(results); 
+
+      resolve(reply.response("Hello " + results[0].FirstName + ", welcome to WellCare!"));
+
+    })
+});
  }
 });
 
 //Route For Specific Doctor account 
 server.route({
   method: 'GET',
-  path: '/account/doc/{name}',
+  path: '/account/doc/name',
+
+  //returns welcome message and doctor's last name from Database
   handler: function (request, reply) {
-     return('Hello, ' + encodeURIComponent(request.params.name) + '!');
-     // return 'hey'
+    return new Promise(function(resolve, reject){
+
+      mysqlCon.query("SELECT LastName FROM Doctor", function (error, results, fields) {
+  
+        
+  
+        console.log(results); 
+  
+        resolve(reply.response("Welcome back Dr. " + results[0].LastName + "!"));
+  
+      })
+  });
   }
  });
 
@@ -59,7 +83,9 @@ server.route({
 server.route({
   method: 'GET',
   path: '/account/user',
-  handler: function(request, h){
+
+  //returns all user data
+  handler: function(request, reply){
 
       return new Promise(function(resolve, reject){
 
@@ -69,7 +95,7 @@ server.route({
 
           console.log(results); 
 
-          resolve(h.response(results));
+          resolve(reply.response(results));
 
         })
     });
@@ -80,13 +106,21 @@ server.route({
 server.route({
   method: 'GET',
   path: '/account/doc',
-  handler: function(request, h){
+  handler: function(request, reply){
 
-      return new Promise(function(resolve, reject){
+    //returns all data from Doctor table
+    return new Promise(function(resolve, reject){
 
-          resolve(h.response("Hello World"));
+      mysqlCon.query("SELECT * FROM Doctor", function (error, results, fields) {
 
-    });
+        if (error) throw error;
+
+        console.log(results); 
+
+        resolve(reply.response(results));
+
+      })
+  });
   }
 });
 
@@ -94,11 +128,11 @@ server.route({
 server.route({
   method: 'GET',
   path: '/wellcare/logout',
-  handler: function(request, h){
+  handler: function(request, reply){
 
       return new Promise(function(resolve, reject){
 
-          resolve(h.response("Hello World"));
+          resolve(reply.response("Goodbye!"));
 
     });
   }
@@ -108,25 +142,40 @@ server.route({
 server.route({
   method: 'GET',
   path: '/wellcare/appointments',
-  handler: function(request, h){
+  handler: function(request, reply){
 
       return new Promise(function(resolve, reject){
 
-          resolve(h.response("Hello World"));
+        mysqlCon.query("SELECT * FROM Appointment", function (error, results, fields) {
 
+          if (error) throw error;
+
+          console.log(results); 
+
+          resolve(reply.response(results));
+
+        })
     });
   }
 });
 
 server.route({
   method: 'GET',
-  path: '/account/user/settings',
-  handler: function(request, h){
+  path: '/account/user/reason',
+  handler: function(request, reply){
 
+      //returns user reason for appointment
       return new Promise(function(resolve, reject){
 
-          resolve(h.response("Hello World"));
+        mysqlCon.query("SELECT Reason FROM Appointment", function (error, results, fields) {
 
+          if (error) throw error;
+
+          console.log(results); 
+
+          resolve(reply.response(results[0].Reason));
+
+        })
     });
   }
 });
