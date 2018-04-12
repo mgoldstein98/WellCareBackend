@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS WellcareDB;
+
 CREATE DATABASE IF NOT EXISTS WellcareDB;
 
 USE WellcareDB;
@@ -35,15 +37,14 @@ USE WellcareDB;
 	FOREIGN KEY (user_id) REFERENCES User(UserId)
 );
 
-
-Select * from Doctor;
-
 INSERT INTO User(UserId, Password, FirstName, LastName, Email, Gender, HomeAddress)
 	VALUES(1, 'abc123', 'Max', 'Gold', 'jSmith@gmail.com', 'Male', '123 Main st.');
 
-INSERT INTO User(UserId, Password, FirstName, LastName, Email, Gender, HomeAddress)
-	VALUES(2, 'abc123', 'Max', 'Gold', 'jSmith@gmail.com', 'Male', '123 Main st.');
+INSERT INTO Doctor(doc_id, Password, FirstName, LastName, Email, Gender, OfficeAddress, specialization)
+	VALUES(10, 'doc123', 'Doctor', 'Doctorson M.D.', 'doctor@gmail.com', 'Male', '123 Main st.', 'bellybutton');
+    
+INSERT INTO Appointment(appointmentID, doc_id, user_id, Date, Time, Reason)
+	VALUES(100, 10, 1, '4/12/18', '12:00', 'Bellybutton Hurting');
     
 
-SELECT * from User;
-
+SELECT * from Appointment;
