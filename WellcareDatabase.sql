@@ -48,3 +48,4 @@ INSERT INTO Appointment(appointmentID, doc_id, user_id, Date, Time, Reason)
     
 
 SELECT * from Appointment;
+SELECT * from User;
