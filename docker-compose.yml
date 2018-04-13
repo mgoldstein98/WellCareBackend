@@ -10,13 +10,13 @@ services: #keyword
       restart: always
       ports:
         - 3306:3306
-      # volumes:
-      #   - database_data:/var/lib/mysql
+      volumes:
+        - database_data:/var/lib/mysql
       environment:
         MYSQL_ROOT_PASSWORD: abc123
         MYSQL_DATABASE: WellcareDB
         MYSQL_USER: USR
         MYSQL_PASSWORD: abc123
-        MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-  # volumes:
-  #   database_data:
+        MYSQL_ALLOW_EMPTY_PASSWORD: "yes"      
+volumes:
+  database_data: 
