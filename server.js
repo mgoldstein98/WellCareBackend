@@ -167,15 +167,15 @@ server.route({
   }
 });
 
-//Route for scheduling an appointment 
+//Route for managing an appointment 
 server.route({
   method: 'GET',
-  path: '/wellcare/appointments',
+  path: '/wellcare/manageAppointments',
   handler: function(request, reply){
 
       return new Promise(function(resolve, reject){
 
-        mysqlCon.query("SELECT * FROM Appointment", function (error, results, fields) {
+        mysqlCon.query("SELECT Date, Time, Reason, FirstName, LastName, OfficeAddress FROM Appointment INNER JOIN Doctor ON Appointment.doc_id = Doctor.doc_id", function (error, results, fields) {
 
           if (error) throw error;
 
@@ -187,6 +187,28 @@ server.route({
     });
   }
 });
+
+server.route({
+  method: 'PUT',
+  path: '/wellcare/updateAppointments',
+  handler: function(request, reply){
+
+      return new Promise(function(resolve, reject){
+
+        mysqlCon.query("UPDATE Appointment INNER JOIN User ON Appointment.user_id = User.UserId SET Time = '12:20' WHERE Appointment.user_id = User.UserId", function (error, results, fields) {
+
+          if (error) throw error;
+
+          console.log(results.affectedRows + " record(s) updated"); 
+
+          resolve(reply.response(results.affectedRows + " record(s) updated"));
+
+        })
+    });
+  }
+});
+
+
 
 server.route({
   method: 'GET',
