@@ -28,25 +28,25 @@ server.route({
 
 //Route For Specific User account 
 server.route({
- method: 'GET',
- path: '/account/user/name',
-
- //returns welcome message and user's first name from Database
- handler: function (request, reply) {
-  return new Promise(function(resolve, reject){
-
-    mysqlCon.query("SELECT FirstName FROM User", function (error, results, fields) {
-
-      
-
-      console.log(results); 
-
-      resolve(reply.response("Hello " + results[0].FirstName + ", welcome to WellCare!"));
-
-    })
-});
- }
-});
+  method: 'GET',
+  path: '/account/user/name',
+ 
+  //returns welcome message and user's first name from Database
+  handler: function (request, reply) {
+   return new Promise(function(resolve, reject){
+ 
+     mysqlCon.query("SELECT FirstName FROM User", function (error, results, fields) {
+ 
+       
+ 
+       console.log(results); 
+ 
+       resolve(reply.response("Hello " + results[0].FirstName + ", welcome to WellCare!"));
+ 
+     })
+ });
+  }
+ });
 
 //Route For Specific Doctor account 
 server.route({
@@ -70,14 +70,14 @@ server.route({
   }
  });
 
-server.route({
-  method: 'POST',
-  path: '/user',
-  handler: function(request, reply) {
-    return ('User Added: ' + request.payload['lName'] + ', '
-    + request.payload['fName']);
-  }
-});
+// server.route({
+//   method: 'POST',
+//   path: '/user',
+//   handler: function(request, reply) {
+//     return ('User Added: ' + request.payload['lName'] + ', '
+//     + request.payload['fName']);
+//   }
+// });
 
 //Route for returning all users
 server.route({
@@ -194,7 +194,7 @@ server.route({
     const HomeAddress = request.payload.HomeAddress;
 
     return new Promise(function(resolve, reject) {
-      var sql = 'INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES(' + UserId + ',' + "'" + Password + "'" + ','
+      var sql = 'INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES(' + UserId + "," + "'" + Password + "'" + ','
       + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Email + "'" + ',' + "'" + Gender + "'" + ',' + "'" + HomeAddress + "'" + ')';
       mysqlCon.query(sql, function (err, result) {
         if (err) {
@@ -202,20 +202,38 @@ server.route({
           resolve(reply.response("404: User not added"));
         }
         else {
-        console.log(result);
-        resolve(reply.response(result));
+          // console.log(result);
+          resolve(reply.response(result));
         }
       });
-    });
+    }); 
   }
 });
 
 server.route({
   method: 'POST',
   path: '/login',
-  handler: function(request, h) {
+  handler: function(request, reply) {
+  
+    const UserId = request.payload.UserId;
+    const Password = request.payload.Password;
+
     return new Promise(function(resolve, reject) {
-      resolve(h.response("User log-in"));
+      var sql = "SELECT Password FROM User WHERE UserId = '" + UserId + "';";
+
+      mysqlCon.query(sql, function (err, result) {
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+        else {
+          var pass = result[0].Password;
+          if(Password === pass)
+            resolve(reply.response('Login Success'));
+          else
+            resolve(reply.response('Login Failed'));
+        }
+      });
     });
   }
 });
