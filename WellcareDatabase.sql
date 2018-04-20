@@ -17,9 +17,8 @@ Create  TABLE IF NOT EXISTS patient(
     address VARCHAR(255),
     emergency_contact VARCHAR(255),
     dob date,
-    profPic VARCHAR(255),
-    isDoctor BIT DEFAULT 0
-    
+    profPic VARCHAR(255)
+   
 );
 
  Create TABLE IF NOT EXISTS doctor(
@@ -47,20 +46,22 @@ Create  TABLE IF NOT EXISTS patient(
     FOREIGN KEY (doc_id) REFERENCES doctor(doc_id),
 	FOREIGN KEY (user_id) REFERENCES patient(patient_id)
 );
-drop table Appointment;
+#drop table Appointment;
 
  Create TABLE IF NOT EXISTS User(
 	user_id int NOT NULL PRIMARY KEY auto_increment,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
+	isDoctor int default 0,
 	FOREIGN KEY (user_id) REFERENCES doctor(doc_id),
     FOREIGN KEY (user_id) REFERENCES patient(patient_id)
-    
+   
 );
+
+#DROP TABLE User;
 
 
  Create TABLE IF NOT EXISTS avail_Times (
- 
 	_Date date,
     _Month int,
     _Day int,
@@ -68,7 +69,6 @@ drop table Appointment;
     _Time time, 
     _avail bit default 1,
 	_ID int generated always AS (_Date + _Time) STORED PRIMARY KEY
-    
  );
  
   Create TABLE IF NOT EXISTS perscription(
@@ -84,6 +84,15 @@ drop table Appointment;
 	FOREIGN KEY (patient_id) REFERENCES patient(patient_id)
 
  );
+
+create table reminders(
+
+	reminder_id int primary key,
+    notification_type VARCHAR(255),
+    _date Date,
+    reminder VARCHAR(255)
+    
+);
 
 create table direction(
 	dir_id int NOT NULL PRIMARY KEY auto_increment,

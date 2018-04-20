@@ -35,13 +35,12 @@ server.route({
   handler: function (request, reply) {
    return new Promise(function(resolve, reject){
  
-     mysqlCon.query("SELECT FirstName FROM User", function (error, results, fields) {
+     mysqlCon.query("SELECT firstName FROM patient", function (error, results, fields) {
  
-       
  
        console.log(results); 
  
-       resolve(reply.response("Hello " + results[0].FirstName + ", welcome to WellCare!"));
+       resolve(reply.response("Hello " + results[0].firstName + ", welcome to WellCare!"));
  
      })
  });
@@ -57,27 +56,47 @@ server.route({
   handler: function (request, reply) {
     return new Promise(function(resolve, reject){
 
-      mysqlCon.query("SELECT LastName FROM Doctor", function (error, results, fields) {
-  
-        
+      mysqlCon.query("SELECT lastName FROM doctor", function (error, results, fields) {
   
         console.log(results); 
   
-        resolve(reply.response("Welcome back Dr. " + results[0].LastName + "!"));
+        resolve(reply.response("Welcome back Dr. " + results[0].lastName + "!"));
   
       })
   });
   }
  });
 
-// server.route({
-//   method: 'POST',
-//   path: '/user',
-//   handler: function(request, reply) {
-//     return ('User Added: ' + request.payload['lName'] + ', '
-//     + request.payload['fName']);
-//   }
-// });
+//creates an appt
+server.route({
+  method: 'POST',
+  path: '/user/makeAppt',
+  handler: function(request, reply) {
+    
+    const appointmentID = request.payload.appointment_id;
+    const doc_id = request.payload.doc_id;
+    const user_id = request.payload.user_id;
+    const Date = request.payload.A_Date;
+    const Time = request.payload.A_Time ;
+    const Reason = request.payload.Reason;
+   
+    return new Promise(function(resolve, reject) {
+      var sql = 'INSERT INTO Appointment (appointment_id, doc_id, user_id, A_Date, A_Time, Reason) VALUES(' + appointmentID + ',' + "'" + doc_id + "'" + ','
+      + "'" + user_id + "'" + ',' + "'" + Date + "'" + ',' + "'" + Time + "'" + ',' + "'" + Reason +  "'" + ') ' ;
+      mysqlCon.query(sql, function (err, result) {
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+        else {
+        console.log(result);
+        resolve(reply.response(result));
+        }
+      });
+    });
+  }
+});
+
 
 //Route for returning all users
 server.route({
@@ -89,7 +108,7 @@ server.route({
 
       return new Promise(function(resolve, reject){
 
-        mysqlCon.query("SELECT * FROM User", function (error, results, fields) {
+        mysqlCon.query("SELECT * FROM patient", function (error, results, fields) {
 
           if (error) throw error;
 
@@ -111,7 +130,7 @@ server.route({
     //returns all data from Doctor table
     return new Promise(function(resolve, reject){
 
-      mysqlCon.query("SELECT * FROM Doctor", function (error, results, fields) {
+      mysqlCon.query("SELECT * FROM doctor", function (error, results, fields) {
 
         if (error) throw error;
 
@@ -138,15 +157,15 @@ server.route({
   }
 });
 
-//Route for scheduling an appointment 
+//Route for managing an appointment 
 server.route({
   method: 'GET',
-  path: '/wellcare/appointments',
+  path: '/wellcare/manageAppointments',
   handler: function(request, reply){
 
       return new Promise(function(resolve, reject){
 
-        mysqlCon.query("SELECT * FROM Appointment", function (error, results, fields) {
+        mysqlCon.query("SELECT A_Date, A_Time, Reason, firstName, lastName, address FROM Appointment INNER JOIN doctor ON Appointment.doc_id = doctor.doc_id", function (error, results, fields) {
 
           if (error) throw error;
 
@@ -159,6 +178,28 @@ server.route({
   }
 });
 
+//update to appts table, changes appt time (hardcoded)
+server.route({
+  method: 'PUT',
+  path: '/wellcare/updateAppointments',
+  handler: function(request, reply){
+
+      return new Promise(function(resolve, reject){
+
+        mysqlCon.query("UPDATE Appointment INNER JOIN patient ON Appointment.user_id = patient.patient_id SET A_Time = '14:00' WHERE Appointment.user_id = patient.patient_id", function (error, results, fields) {
+
+          if (error) throw error;
+
+          console.log(results.affectedRows + " record(s) updated"); 
+
+          resolve(reply.response(results.affectedRows + " record(s) updated"));
+
+        })
+    });
+  }
+});
+
+//gets reason for appt
 server.route({
   method: 'GET',
   path: '/account/user/reason',
@@ -180,22 +221,33 @@ server.route({
   }
 });
 
+//registers a user, puts all user info into patient DB
 server.route({
   method: 'POST',
-  path: '/createaccount',
+  path: '/_register',
   handler: function(request, reply) {
 
-    const UserId = request.payload.UserId;
-    const Password = request.payload.Password;
-    const FirstName = request.payload.FirstName;
-    const LastName = request.payload.LastName;
-    const Email = request.payload.Email;
-    const Gender = request.payload.Gender;
-    const HomeAddress = request.payload.HomeAddress;
+    const patient_id = request.payload.patient_id;
+    const Gender = request.payload.gender;
+    const Username = request.payload.username;
+    const Password = request.payload.password;
+    const FirstName = request.payload.firstName;
+    const LastName = request.payload.lastName;
+    const Email = request.payload.email;
+    const Phone = request.payload.phone;
+    const HomeAddress = request.payload.address;
+    const EmergencyContact = request.payload.emergency_contact;
+    const Birthday = request.payload.dob;
+    const ProfilePic = request.payload.profPic;
+    
+  
+    console.log(request.payload);
 
     return new Promise(function(resolve, reject) {
-      var sql = 'INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES(' + UserId + "," + "'" + Password + "'" + ','
-      + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Email + "'" + ',' + "'" + Gender + "'" + ',' + "'" + HomeAddress + "'" + ')';
+      var sql = 'INSERT INTO patient (patient_id, gender, username, password, firstName, lastName, email, phone, address, emergency_contact, dob, profPic) VALUES(' + patient_id + "," + "'" + Gender + "'" + ','
+      + "'" + Username + "'" + ',' + "'" + Password + "'" + ',' + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Email + "'" + ',' + "'" + Phone + "'" + ',' + "'" + HomeAddress + "'" + ',' + "'" + EmergencyContact + "'" + ',' + "'" + Birthday + "'" + ',' + "'" + ProfilePic +  "'" + ');' ;
+      //INSERT INTO User(patient_id, username, password) VALUES (' + patient_id + ","+ "'" + Username + "'" + "," + "'" + Password + "'"+  ');'
+
       mysqlCon.query(sql, function (err, result) {
         if (err) {
           throw err;
@@ -210,6 +262,7 @@ server.route({
   }
 });
 
+//verify is acct exists
 server.route({
   method: 'POST',
   path: '/login',
@@ -238,6 +291,7 @@ server.route({
   }
 });
 
+//change password for USER
 server.route({
   method: 'POST',
   path: '/changepassword',
@@ -248,6 +302,7 @@ server.route({
   }
 });
 
+//add doctor acct info
 server.route({
   method: 'POST',
   path: '/doctor',
@@ -258,6 +313,7 @@ server.route({
     });
   }
 });
+
 
 server.route({
   method: 'POST',
