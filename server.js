@@ -1,21 +1,13 @@
 'use strict';
-// const Intert = require('inert');
+
+// const cors = require 
 const Hapi = require('hapi');
+// const Intert = require('inert');
 const Path = require('path');
-var session = require('client-sessions');
+
+const server = new Hapi.Server({ host: '0.0.0.0', port: 4000, routes: {cors: true } }); //{origin: ['http://localhost:4200'] }
 var mysql = require('mysql');
 
-const server = new Hapi.Server({ host: '0.0.0.0', port: 4000,cors: true});
-
-server.use(session({
-  cookieName: 'session',
-  secret: 'random_string_goes_here',
-  duration: 30 * 60 * 1000,
-  activeDuration: 5 * 60 * 1000,
-  httpOnly: true,
-  secure: true,
-  ephemeral: true
-}));
 
 var mysqlCon = mysql.createConnection({
     //host will be the name of the service from the docker-compose file.
@@ -24,7 +16,6 @@ var mysqlCon = mysql.createConnection({
     password : 'abc123',
     database : 'WellcareDB'
 });
-
 
 // Route for Home Landing Page 
 server.route({
@@ -37,38 +28,94 @@ server.route({
 
 //Route For Specific User account 
 server.route({
- method: 'GET',
- path: '/account/user/{name}',
- handler: function (request, reply) {
-    return('Hello, ' + encodeURIComponent(request.params.name) + '!');
-    // return 'hey'
- }
-});
+  method: 'GET',
+  path: '/account/user/name',
+ 
+  //returns welcome message and user's first name from Database
+  handler: function (request, reply) {
+   return new Promise(function(resolve, reject){
+ 
+     mysqlCon.query("SELECT FirstName FROM User", function (error, results, fields) {
+ 
+       
+ 
+       console.log(results); 
+ 
+       resolve(reply.response("Hello " + results[0].FirstName + ", welcome to WellCare!"));
+ 
+     })
+ });
+  }
+ });
 
 //Route For Specific Doctor account 
 server.route({
   method: 'GET',
-  path: '/account/doc/{name}',
+  path: '/account/doc/name',
+
+  //returns welcome message and doctor's last name from Database
   handler: function (request, reply) {
-     return('Hello, ' + encodeURIComponent(request.params.name) + '!');
-     // return 'hey'
+    return new Promise(function(resolve, reject){
+
+      mysqlCon.query("SELECT LastName FROM Doctor", function (error, results, fields) {
+  
+        
+  
+        console.log(results); 
+  
+        resolve(reply.response("Welcome back Dr. " + results[0].LastName + "!"));
+  
+      })
+  });
   }
  });
 
+// server.route({
+//   method: 'POST',
+//   path: '/user',
+//   handler: function(request, reply) {
+//     return ('User Added: ' + request.payload['lName'] + ', '
+//     + request.payload['fName']);
+//   }
+// });
+
 server.route({
   method: 'POST',
-  path: '/user',
+  path: '/user/makeAppt',
   handler: function(request, reply) {
-    return ('User Added: ' + request.payload['lName'] + ', '
-    + request.payload['fName']);
+    
+    const appointmentID = request.payload.appointmentID;
+    const doc_id = request.payload.doc_id;
+    const user_id = request.payload.user_id;
+    const Date = request.payload.Date;
+    const Time = request.payload.Time ;
+    const Reason = request.payload.Reason;
+   
+    return new Promise(function(resolve, reject) {
+      var sql = 'INSERT INTO Appointment (appointmentID, doc_id, user_id, Date, Time, Reason) VALUES(' + appointmentID + ',' + "'" + doc_id + "'" + ','
+      + "'" + user_id + "'" + ',' + "'" + Date + "'" + ',' + "'" + Time + "'" + ',' + "'" + Reason +  "'" + ')';
+      mysqlCon.query(sql, function (err, result) {
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+        else {
+        console.log(result);
+        resolve(reply.response(result));
+        }
+      });
+    });
   }
 });
+
 
 //Route for returning all users
 server.route({
   method: 'GET',
   path: '/account/user',
-  handler: function(request, h){
+
+  //returns all user data
+  handler: function(request, reply){
 
       return new Promise(function(resolve, reject){
 
@@ -78,7 +125,7 @@ server.route({
 
           console.log(results); 
 
-          resolve(h.response(results));
+          resolve(reply.response(results));
 
         })
     });
@@ -89,13 +136,21 @@ server.route({
 server.route({
   method: 'GET',
   path: '/account/doc',
-  handler: function(request, h){
+  handler: function(request, reply){
 
-      return new Promise(function(resolve, reject){
+    //returns all data from Doctor table
+    return new Promise(function(resolve, reject){
 
-          resolve(h.response("Hello World"));
+      mysqlCon.query("SELECT * FROM Doctor", function (error, results, fields) {
 
-    });
+        if (error) throw error;
+
+        console.log(results); 
+
+        resolve(reply.response(results));
+
+      })
+  });
   }
 });
 
@@ -103,49 +158,84 @@ server.route({
 server.route({
   method: 'GET',
   path: '/wellcare/logout',
-  handler: function(request, h){
+  handler: function(request, reply){
 
       return new Promise(function(resolve, reject){
 
-          resolve(h.response("Hello World"));
+          resolve(reply.response("Goodbye!"));
 
     });
   }
 });
 
-//Route for scheduling an appointment 
+//Route for managing an appointment 
 server.route({
   method: 'GET',
-  path: '/wellcare/appointments',
-  handler: function(request, h){
+  path: '/wellcare/manageAppointments',
+  handler: function(request, reply){
 
       return new Promise(function(resolve, reject){
 
-          resolve(h.response("Hello World"));
+        mysqlCon.query("SELECT Date, Time, Reason, FirstName, LastName, OfficeAddress FROM Appointment INNER JOIN Doctor ON Appointment.doc_id = Doctor.doc_id", function (error, results, fields) {
 
+          if (error) throw error;
+
+          console.log(results); 
+
+          resolve(reply.response(results));
+
+        })
+    });
+  }
+});
+
+server.route({
+  method: 'PUT',
+  path: '/wellcare/updateAppointments',
+  handler: function(request, reply){
+
+      return new Promise(function(resolve, reject){
+
+        mysqlCon.query("UPDATE Appointment INNER JOIN User ON Appointment.user_id = User.UserId SET Time = '12:20' WHERE Appointment.user_id = User.UserId", function (error, results, fields) {
+
+          if (error) throw error;
+
+          console.log(results.affectedRows + " record(s) updated"); 
+
+          resolve(reply.response(results.affectedRows + " record(s) updated"));
+
+        })
     });
   }
 });
 
 server.route({
   method: 'GET',
-  path: '/account/user/settings',
-  handler: function(request, h){
+  path: '/account/user/reason',
+  handler: function(request, reply){
 
+      //returns user reason for appointment
       return new Promise(function(resolve, reject){
 
-          resolve(h.response("Hello World"));
+        mysqlCon.query("SELECT Reason FROM Appointment", function (error, results, fields) {
 
+          if (error) throw error;
+
+          console.log(results); 
+
+          resolve(reply.response(results[0].Reason));
+
+        })
     });
   }
 });
 
 server.route({
   method: 'POST',
-  path: '/createaccount',
+  path: '/_register',
   handler: function(request, reply) {
 
-    // const UserId = request.payload.UserId;
+    const UserId = request.payload.UserId;
     const Password = request.payload.Password;
     const FirstName = request.payload.FirstName;
     const LastName = request.payload.LastName;
@@ -153,8 +243,10 @@ server.route({
     const Gender = request.payload.Gender;
     const HomeAddress = request.payload.HomeAddress;
 
+    console.log(request.payload);
+
     return new Promise(function(resolve, reject) {
-      var sql = 'INSERT INTO User (Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES(' + Password + "'" + ','
+      var sql = 'INSERT INTO User (UserId, Password, FirstName, LastName, Email, Gender, HomeAddress) VALUES(' + UserId + "," + "'" + Password + "'" + ','
       + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Email + "'" + ',' + "'" + Gender + "'" + ',' + "'" + HomeAddress + "'" + ')';
       mysqlCon.query(sql, function (err, result) {
         if (err) {
@@ -166,7 +258,7 @@ server.route({
           resolve(reply.response(result));
         }
       });
-    });
+    }); 
   }
 });
 
@@ -189,7 +281,8 @@ server.route({
         else {
           var pass = result[0].Password;
           if(Password === pass)
-            resolve(reply.response('Login Success'));
+            resolve(reply.response(JSON.stringify('Login Success')));
+            
           else
             resolve(reply.response('Login Failed'));
         }
@@ -225,19 +318,10 @@ server.route({
   handler: function(request, h) {
     return new Promise(function(resolve, reject) {
 
-      resolve(h.response("HIPPA Page"));
+      resolve(h.response("User added"));
     });
   }
 });
-
-server.route({ 
-  method: '*', 
-  path: '/{p*}', 
-  handler: function (request, h) {
-    console.log('general_Request'); 
-    return h.response('Whoops, that is not a route').code(404);
-    }
-  });
 
 server
   .start()
