@@ -1,13 +1,21 @@
 'use strict';
-
-const Hapi = require('hapi');
 // const Intert = require('inert');
+const Hapi = require('hapi');
 const Path = require('path');
-
-const server = new Hapi.Server({ host: '0.0.0.0', port: 4000 });
-
+var session = require('client-sessions');
 var mysql = require('mysql');
 
+const server = new Hapi.Server({ host: '0.0.0.0', port: 4000,cors: true});
+
+server.use(session({
+  cookieName: 'session',
+  secret: 'random_string_goes_here',
+  duration: 30 * 60 * 1000,
+  activeDuration: 5 * 60 * 1000,
+  httpOnly: true,
+  secure: true,
+  ephemeral: true
+}));
 
 var mysqlCon = mysql.createConnection({
     //host will be the name of the service from the docker-compose file.
@@ -16,6 +24,7 @@ var mysqlCon = mysql.createConnection({
     password : 'abc123',
     database : 'WellcareDB'
 });
+
 
 // Route for Home Landing Page 
 server.route({
@@ -216,10 +225,19 @@ server.route({
   handler: function(request, h) {
     return new Promise(function(resolve, reject) {
 
-      resolve(h.response("User added"));
+      resolve(h.response("HIPPA Page"));
     });
   }
 });
+
+server.route({ 
+  method: '*', 
+  path: '/{p*}', 
+  handler: function (request, h) {
+    console.log('general_Request'); 
+    return h.response('Whoops, that is not a route').code(404);
+    }
+  });
 
 server
   .start()
