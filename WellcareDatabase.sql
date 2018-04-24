@@ -80,12 +80,12 @@ Create  TABLE IF NOT EXISTS patient(
 	refill int default 0,
 	_ID int generated always AS (patient_id + Rx_Numb)STORED PRIMARY KEY,
 	script varchar(255),
-	FOREIGN KEY (doc_id) REFERENCES Doctor(doc_id),
+	FOREIGN KEY (doc_id) REFERENCES doctor(doc_id),
 	FOREIGN KEY (patient_id) REFERENCES patient(patient_id)
 
  );
 
-create table reminders(
+Create TABLE IF NOT EXISTS reminders(
 
 	reminder_id int primary key,
     notification_type VARCHAR(255),
@@ -94,14 +94,12 @@ create table reminders(
     
 );
 
-create table direction(
+Create TABLE IF NOT EXISTS DocNote(
 	dir_id int NOT NULL PRIMARY KEY auto_increment,
-     doc_id int NOT NULL,
-     patient_id int NOT NULL,
-	_Date date NOT NULL, 
-     _Time time NOT NULL, 
-     dir varchar(255)NOT NULL,
-	FOREIGN KEY (doc_id) REFERENCES Doctor(doc_id),
+	doc_id int NOT NULL,
+	patient_id int NOT NULL,
+	note varchar(255)NOT NULL,
+	FOREIGN KEY (doc_id) REFERENCES doctor(doc_id),
 	FOREIGN KEY (patient_id) REFERENCES patient(patient_id)
 );
 
@@ -368,10 +366,8 @@ Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-26',12
 Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'08:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'09:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'10:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'11:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'12:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'13:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'14:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'15:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'16:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'17:00:00');
 Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'08:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'09:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'10:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'11:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'12:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'13:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'14:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'15:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'16:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'17:00:00');
 Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'08:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'09:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'10:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'11:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'12:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'13:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'14:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'15:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'16:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'17:00:00');
-
 #INSERT INTO User(UserId, Password, FirstName, LastName, Email, Gender, HomeAddress)
 	#VALUES(1048, 'abc123', 'Max', 'Gold', 'jSmith@gmail.com', 'Male', '123 Main st.');
-
 #INSERT INTO Doctor(doc_id, Password, FirstName, LastName, Email, Gender, OfficeAddress, specialization)
 	#VALUES(1048, 'doc123', 'Doctor', 'Doctorson M.D.', 'doctor@gmail.com', 'Male', '123 Main st.', 'bellybutton');
    
