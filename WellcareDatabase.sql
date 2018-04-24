@@ -5,7 +5,7 @@ CREATE DATABASE IF NOT EXISTS WellcareDB;
 USE WellcareDB;
 
 
-Create  TABLE IF NOT EXISTS patient(
+Create TABLE IF NOT EXISTS patient(
 	patient_id int NOT NULL PRIMARY KEY,
 	gender VARCHAR(255),
     username VARCHAR(255) NOT NULL,
@@ -46,19 +46,6 @@ Create  TABLE IF NOT EXISTS patient(
     FOREIGN KEY (doc_id) REFERENCES doctor(doc_id),
 	FOREIGN KEY (user_id) REFERENCES patient(patient_id)
 );
-#drop table Appointment;
-
- Create TABLE IF NOT EXISTS User(
-	user_id int NOT NULL PRIMARY KEY auto_increment,
-    username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-	isDoctor int default 0,
-	FOREIGN KEY (user_id) REFERENCES doctor(doc_id),
-    FOREIGN KEY (user_id) REFERENCES patient(patient_id)
-   
-);
-
-#DROP TABLE User;
 
 
  Create TABLE IF NOT EXISTS avail_Times (
@@ -366,16 +353,24 @@ Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-26',12
 Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'08:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'09:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'10:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'11:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'12:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'13:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'14:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'15:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'16:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-27',12,27,2018,'17:00:00');
 Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'08:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'09:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'10:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'11:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'12:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'13:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'14:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'15:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'16:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-28',12,28,2018,'17:00:00');
 Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'08:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'09:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'10:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'11:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'12:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'13:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'14:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'15:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'16:00:00');	Insert into avail_Times(_Date, _Month, _Day, _Year,_Time) VALUES('2018-12-31',12,31,2018,'17:00:00');
-#INSERT INTO User(UserId, Password, FirstName, LastName, Email, Gender, HomeAddress)
-	#VALUES(1048, 'abc123', 'Max', 'Gold', 'jSmith@gmail.com', 'Male', '123 Main st.');
-#INSERT INTO Doctor(doc_id, Password, FirstName, LastName, Email, Gender, OfficeAddress, specialization)
-	#VALUES(1048, 'doc123', 'Doctor', 'Doctorson M.D.', 'doctor@gmail.com', 'Male', '123 Main st.', 'bellybutton');
-   
-#INSERT INTO Appointment(appointmentID, doc_id, user_id, Date, Time, Reason)
-	#VALUES(113, 1048, 1048, '4/12/18', '12:00', 'Bellybutton Hurting');
-#
-#SELECT Date, Time, Reason, FirstName, LastName, OfficeAddress FROM Appointment INNER JOIN Doctor ON Appointment.doc_id = Doctor.doc_id;
- 
-select * FROM User;
-#SELECT Date, Time, Reason, FirstName, LastName, OfficeAddress FROM Appointment INNER JOIN Doctor ON Appointment.doc_id = Doctor.doc_id;
+
+INSERT INTO patient (patient_id,gender,username, password, firstName, lastName, email, phone,address,emergency_contact,dob,profPic) 
+	VALUES(1,"male","user1", "pass1", "John", "Smith", "jsmith@gmail.com", "555-555-5555", "123 st.", "mom", '1998-02-17', "prof.com");
+    
+INSERT INTO doctor (doc_id,username, password, firstName, lastName, specialty, email, phone,address,rating,profPic) 
+	VALUES(1, "doc1", "docPass1", "Doctor", "doctorman", "Brains", "doc@gmail.com", "555-555-5555", "123 doc st.", 5, "profPic.jpg");
+
+INSERT INTO Appointment (A_Date,A_Time, doc_id, user_id, Reason) 
+	VALUES('2018-04-20', '08:00:00', 1, 1, "No feel good");
+
+INSERT INTO perscription (doc_id,patient_id, start_Date, Rx_Numb, refill, script) 
+	VALUES(1, 1, '2018-04-20', 1, 0, "Cough Medicine");
+
+INSERT INTO reminders (reminder_id,notification_type, _date, reminder) 
+	VALUES(1, "Email", '2018-04-20', "You have an appt coming up!");
+
+INSERT INTO DocNote (dir_id,doc_id, patient_id, note) 
+	VALUES(1, 1, 1, "Take the medicine twice a day!");
+
 */
+
