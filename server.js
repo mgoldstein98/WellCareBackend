@@ -4,7 +4,7 @@ const Hapi = require('hapi');
 // const Intert = require('inert');
 const Path = require('path');
 
-const server = new Hapi.Server({ host: '0.0.0.0', port: 4000 });
+const server = new Hapi.Server({ host: '0.0.0.0', port: 4000});
 
 var mysql = require('mysql');
 
@@ -223,71 +223,101 @@ server.route({
 
 //registers a user, puts all user info into patient DB
 server.route({
+
   method: 'POST',
+
   path: '/_register',
+  
   handler: function(request, reply) {
 
-    const patient_id = request.payload.patient_id;
-    const Gender = request.payload.gender;
-    const Username = request.payload.username;
-    const Password = request.payload.password;
-    const FirstName = request.payload.firstName;
-    const LastName = request.payload.lastName;
-    const Email = request.payload.email;
-    const Phone = request.payload.phone;
-    const HomeAddress = request.payload.address;
-    const EmergencyContact = request.payload.emergency_contact;
-    const Birthday = request.payload.dob;
-    const ProfilePic = request.payload.profPic;
+    const isDoc = request.payload.isDoctor;
+
+    console.log(isDoc);
+
+    //post to doc
+    if(isDoc == 1){
+
+      const DocId = request.payload.doc_id;
+      const Username = request.payload.username;
+      const Password = request.payload.password;
+      const FirstName = request.payload.firstName;
+      const LastName = request.payload.lastName;
+      const Specialty = request.payload.specialty;
+      const Email = request.payload.email;
+      const Phone = request.payload.phone;
+      const Address = request.payload.address;
+      const Rating = request.payload.rating;
+      const ProfilePic = request.payload.profPic;
     
-  
-    console.log(request.payload);
+      console.log(request.payload);
 
-    return new Promise(function(resolve, reject) {
-      var sql = 'INSERT INTO patient (patient_id, gender, username, password, firstName, lastName, email, phone, address, emergency_contact, dob, profPic) VALUES(' + patient_id + "," + "'" + Gender + "'" + ','
-      + "'" + Username + "'" + ',' + "'" + Password + "'" + ',' + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Email + "'" + ',' + "'" + Phone + "'" + ',' + "'" + HomeAddress + "'" + ',' + "'" + EmergencyContact + "'" + ',' + "'" + Birthday + "'" + ',' + "'" + ProfilePic +  "'" + ');' ;
-      //INSERT INTO User(patient_id, username, password) VALUES (' + patient_id + ","+ "'" + Username + "'" + "," + "'" + Password + "'"+  ');'
+      return new Promise(function(resolve, reject) {
 
-      mysqlCon.query(sql, function (err, result) {
-        if (err) {
-          throw err;
-          resolve(reply.response("404: User not added"));
-        }
-        else {
-          // console.log(result);
-          resolve(reply.response(result));
-        }
+        var sql = 'INSERT INTO doctor (doc_id,username, password, firstName, lastName, specialty, email, phone,address,rating,profPic) VALUES(' + DocId + "," + "'" + Username + "'" + ','
+        + "'" + Password + "'" + ',' + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Specialty + "'" + ',' + "'" + Email + "'" + ',' + "'" + Phone + "'" + ','
+         + "'" + Address + "'" + ',' +  Rating + ',' + "'" + ProfilePic + "'" +'); ';
+
+        mysqlCon.query(sql, function (err, result) {
+
+          if (err) {
+
+            throw err;
+            resolve(reply.response("404: User not added"));
+
+          }
+
+          else {
+
+            // console.log(result);
+            resolve(reply.response(result));
+            
+          }
+        });
       });
-    }); 
-  }
-});
+    } 
 
-//verify is acct exists
-server.route({
-  method: 'POST',
-  path: '/login',
-  handler: function(request, reply) {
-  
-    const UserId = request.payload.UserId;
-    const Password = request.payload.Password;
+    //post to patient
+    else{
 
-    return new Promise(function(resolve, reject) {
-      var sql = "SELECT Password FROM User WHERE UserId = '" + UserId + "';";
+      const PatientId = request.payload.patient_id;
+      const Gender = request.payload.gender;
+      const Username = request.payload.username;
+      const Password = request.payload.password;
+      const FirstName = request.payload.firstName;
+      const LastName = request.payload.lastName;
+      const Email = request.payload.email;
+      const Phone = request.payload.phone;
+      const Address = request.payload.address;
+      const EmergencyContact = request.payload.emergency_contact;
+      const Dob = request.payload.dob;
+      const ProfilePic = request.payload.profPic;
+    
+      console.log(request.payload);
 
-      mysqlCon.query(sql, function (err, result) {
-        if (err) {
-          throw err;
-          resolve(reply.response("404: User not added"));
-        }
-        else {
-          var pass = result[0].Password;
-          if(Password === pass)
-            resolve(reply.response('Login Success'));
-          else
-            resolve(reply.response('Login Failed'));
-        }
+      return new Promise(function(resolve, reject) {
+
+        var sql = 'INSERT INTO patient (patient_id,gender,username, password, firstName, lastName, email, phone,address,emergency_contact,dob,profPic) VALUES(' + PatientId + "," + "'" + Gender + "'" + "," + "'" + Username + "'" + ','
+        + "'" + Password + "'" + ',' + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Email + "'" + ',' + "'" + Phone + "'" + ','
+         + "'" + Address + "'" + ',' + "'" + EmergencyContact + "'" + ',' + "'" + Dob + "'" + "," + "'" + ProfilePic + "'" +')';
+
+        mysqlCon.query(sql, function (err, result) {
+
+          if (err) {
+
+            throw err;
+            resolve(reply.response("404: User not added"));
+
+          }
+
+          else {
+
+            // console.log(result);
+            resolve(reply.response(result));
+
+          }
+        });
       });
-    });
+    }
   }
 });
 
