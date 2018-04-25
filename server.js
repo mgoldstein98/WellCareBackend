@@ -221,21 +221,14 @@ server.route({
   }
 });
 
-//registers a user, puts all user info into patient DB
+//registers a user, puts all user info into doctor DB
 server.route({
 
   method: 'POST',
 
-  path: '/_register',
-  
+  path: '/_register/doc',
+
   handler: function(request, reply) {
-
-    const isDoc = request.payload.isDoctor;
-
-    console.log(isDoc);
-
-    //post to doc
-    if(isDoc == 1){
 
       const DocId = request.payload.doc_id;
       const Username = request.payload.username;
@@ -253,11 +246,11 @@ server.route({
 
       return new Promise(function(resolve, reject) {
 
-        var sql = 'INSERT INTO doctor (doc_id,username, password, firstName, lastName, specialty, email, phone,address,rating,profPic) VALUES(' + DocId + "," + "'" + Username + "'" + ','
+        var docSql = 'INSERT INTO doctor (doc_id,username, password, firstName, lastName, specialty, email, phone,address,rating,profPic) VALUES(' + DocId + "," + "'" + Username + "'" + ','
         + "'" + Password + "'" + ',' + "'" + FirstName + "'" + ',' + "'" + LastName + "'" + ',' + "'" + Specialty + "'" + ',' + "'" + Email + "'" + ',' + "'" + Phone + "'" + ','
          + "'" + Address + "'" + ',' +  Rating + ',' + "'" + ProfilePic + "'" +'); ';
 
-        mysqlCon.query(sql, function (err, result) {
+        mysqlCon.query(docSql, function (err, result) {
 
           if (err) {
 
@@ -273,11 +266,40 @@ server.route({
             
           }
         });
-      });
-    } 
 
+        var userSql = 'INSERT INTO User (username, password, isDoc) VALUES(' + "'" + Username + "'" + "," + "'" + Password + "'" + "," + 1 +'); ';
+
+        mysqlCon.query(userSql, function (err, result) {
+
+          if (err) {
+
+            throw err;
+            resolve(reply.response("404: User not added"));
+
+          }
+
+          else {
+
+            // console.log(result);
+            resolve(reply.response(result));
+            
+          }
+        });
+      
+      });
+    }
+  });
+
+server.route({
+
+    method: 'POST',
+  
+    path: '/_register/patient',
+  
+    handler: function(request, reply) {
+  
     //post to patient
-    else{
+  
 
       const PatientId = request.payload.patient_id;
       const Gender = request.payload.gender;
@@ -315,10 +337,30 @@ server.route({
             resolve(reply.response(result));
 
           }
+        
         });
+
+        var userSql = 'INSERT INTO User (username, password, isDoc) VALUES(' + "'" + Username + "'" + "," + "'" + Password + "'" + "," + 0 +'); ';
+
+        mysqlCon.query(userSql, function (err, result) {
+
+          if (err) {
+
+            throw err;
+            resolve(reply.response("404: User not added"));
+
+          }
+
+          else {
+
+            // console.log(result);
+            resolve(reply.response(result));
+            
+          }
+        });
+
       });
     }
-  }
 });
 
 //change password for USER
