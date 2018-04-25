@@ -35,6 +35,13 @@ Create TABLE IF NOT EXISTS patient(
     profPic VARCHAR(255)
 );
 
+Create TABLE IF NOT EXISTS User (
+	table_id int NOT NULL PRIMARY KEY auto_increment,
+    username VARCHAR(255),
+    password VARCHAR(255),
+    isDoc int
+);
+
  
  Create TABLE IF NOT EXISTS Appointment (
 	A_Date date,
