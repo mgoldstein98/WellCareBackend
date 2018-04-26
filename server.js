@@ -386,6 +386,34 @@ server.route({
   }
 });
 
+server.route({
+  method: 'POST',
+  path: '/appointments/availableTimes',
+ 
+  //returns welcome message and doctor's last name from Database
+  handler: function (request, reply) {
+    const Date = request.payload._Date;
+    return new Promise(function(resolve, reject){
+
+      mysqlCon.query("SELECT _Time FROM avail_Times WHERE avail_Times._Date = " + "'" + Date + "';" , function (error, results, fields) {
+  
+        var count =  results.length;
+        console.log(count);
+        console.log(results); 
+        console.log(results[0]); 
+        var timeString = "";
+        for(var i = 0; i < count; i++){
+          timeString += (results[i]._Time + "|");
+         
+        }
+        //returning a string of times, delimited by pipes, approved by: Jeremy Brachle
+        resolve(reply.response(JSON.stringify(timeString)));
+  
+      })
+  });
+  }
+ });
+
 
 server.route({
   method: 'POST',
