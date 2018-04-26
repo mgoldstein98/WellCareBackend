@@ -50,6 +50,7 @@ Create TABLE IF NOT EXISTS User (
     doc_id int NOT NULL,
     user_id int NOT NULL ,
     Reason VARCHAR(255),
+    status VARCHAR(255),
     FOREIGN KEY (doc_id) REFERENCES doctor(doc_id),
 	FOREIGN KEY (user_id) REFERENCES patient(patient_id)
 );
