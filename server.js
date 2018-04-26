@@ -563,6 +563,37 @@ server.route({
   }
 });
 
+
+server.route({
+  method: 'POST',
+  path: '/patient',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      var sql = "SELECT * FROM patient WHERE patient_id = " + 2 + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+        else {
+          console.log(result[0]);
+
+          // var pass = result[0].password;
+          // if(password === pass)
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+          // else
+          //   resolve(reply.response(JSON.stringify('Login Failed')));
+        }
+      });
+    });
+  }
+});
+
+
+
 server.route({
   method: 'POST',
   path: '/HIPPA',
