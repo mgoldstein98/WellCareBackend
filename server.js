@@ -221,6 +221,7 @@ server.route({
   }
 });
 
+
 //registers a user, puts all user info into doctor DB
 server.route({
 
@@ -290,6 +291,7 @@ server.route({
     }
   });
 
+//creates a patient account
 server.route({
 
     method: 'POST',
@@ -299,7 +301,6 @@ server.route({
     handler: function(request, reply) {
   
     //post to patient
-  
 
       const PatientId = request.payload.patient_id;
       const Gender = request.payload.gender;
@@ -374,18 +375,7 @@ server.route({
   }
 });
 
-//add doctor acct info
-server.route({
-  method: 'POST',
-  path: '/doctor',
-  handler: function(request, h) {
-    return new Promise(function(resolve, reject) {
-
-      resolve(h.response("User added"));
-    });
-  }
-});
-
+//shows all availiable times for a given date (YYYY-MM-DD)
 server.route({
   method: 'POST',
   path: '/appointments/availableTimes',
@@ -414,14 +404,38 @@ server.route({
   }
  });
 
-
+//login function to connect
 server.route({
   method: 'POST',
-  path: '/HIPPA',
-  handler: function(request, h) {
-    return new Promise(function(resolve, reject) {
+  path: '/login',
+  handler: function(request, reply) {
+  
+    const username = request.payload.username;
+    const password = request.payload.password;
 
-      resolve(h.response("User added"));
+    console.log(username, password);
+
+    return new Promise(function(resolve, reject) {
+      var sql = "SELECT * FROM User WHERE username = '" + username + "';";
+
+      mysqlCon.query(sql, function (err, result) {
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+        else {
+          console.log(result);
+          var pass = result[0].password;
+          if(password === pass)
+            if(result[0].isDoc === 1)
+              resolve(reply.response(JSON.stringify('1')));
+            else
+              resolve(reply.response(JSON.stringify('0')));
+            
+          else
+            resolve(reply.response(JSON.stringify('-1')));
+        }
+      });
     });
   }
 });
@@ -431,3 +445,4 @@ server
   .catch(err => {
     console.log(err);
 })
+
