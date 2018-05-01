@@ -21,6 +21,14 @@ Create TABLE IF NOT EXISTS patient(
    
 );
 
+Create TABLE IF NOT EXISTS docReview(
+	review_id int NOT NULL PRIMARY KEY auto_increment,
+    username VARCHAR(255),
+    rating int, 
+    A_Date date,
+    comment VARCHAR(255)
+);
+
  Create TABLE IF NOT EXISTS doctor(
 	doc_id int NOT NULL PRIMARY KEY auto_increment,
     username VARCHAR(255) NOT NULL,
@@ -32,7 +40,10 @@ Create TABLE IF NOT EXISTS patient(
     phone VARCHAR(255),
     address VARCHAR(255),
     rating int,
-    profPic VARCHAR(255)
+    profPic VARCHAR(255),
+    FOREIGN KEY (username) REFERENCES docReview(username),
+    FOREIGN KEY (username) REFERENCES docReview(username)
+    
 );
 
 Create TABLE IF NOT EXISTS User (
@@ -50,6 +61,9 @@ Create TABLE IF NOT EXISTS User (
     doc_id int NOT NULL,
     user_id int NOT NULL ,
     Reason VARCHAR(255),
+    insurance VARCHAR(255),
+    newPatient int,
+    type VARCHAR(255),
     status VARCHAR(255),
     FOREIGN KEY (doc_id) REFERENCES doctor(doc_id),
 	FOREIGN KEY (user_id) REFERENCES patient(patient_id)
@@ -75,6 +89,8 @@ Create TABLE IF NOT EXISTS User (
 	refill int default 0,
 	_ID int generated always AS (patient_id + Rx_Numb)STORED PRIMARY KEY,
 	script varchar(255),
+    description varchar(255),
+    expiration date,
 	FOREIGN KEY (doc_id) REFERENCES doctor(doc_id),
 	FOREIGN KEY (patient_id) REFERENCES patient(patient_id)
 
@@ -94,6 +110,18 @@ Create TABLE IF NOT EXISTS DocNote(
 	doc_id int NOT NULL,
 	patient_id int NOT NULL,
 	note varchar(255)NOT NULL,
+    beenDisplayed int,
+	FOREIGN KEY (doc_id) REFERENCES doctor(doc_id),
+	FOREIGN KEY (patient_id) REFERENCES patient(patient_id)
+);
+
+Create TABLE IF NOT EXISTS Notification(
+	notify_id int NOT NULL PRIMARY KEY auto_increment,
+	A_date date,
+	message VARCHAR(255),
+    beenDisplayed int,
+    doc_id int,
+    patient_id int,
 	FOREIGN KEY (doc_id) REFERENCES doctor(doc_id),
 	FOREIGN KEY (patient_id) REFERENCES patient(patient_id)
 );
@@ -368,17 +396,18 @@ INSERT INTO patient (patient_id,gender,username, password, firstName, lastName, 
 INSERT INTO doctor (doc_id,username, password, firstName, lastName, specialty, email, phone,address,rating,profPic) 
 	VALUES(1, "doc1", "docPass1", "Doctor", "doctorman", "Brains", "doc@gmail.com", "555-555-5555", "123 doc st.", 5, "profPic.jpg");
 
-INSERT INTO Appointment (A_Date,A_Time, doc_id, user_id, Reason) 
-	VALUES('2018-04-20', '08:00:00', 1, 1, "No feel good");
 
-INSERT INTO perscription (doc_id,patient_id, start_Date, Rx_Numb, refill, script) 
-	VALUES(1, 1, '2018-04-20', 1, 0, "Cough Medicine");
+INSERT INTO Appointment (A_Date,A_Time, doc_id, user_id, Reason, insurance, newPatient, type, status) 
+	VALUES('2018-04-20', '08:00:00', 1, 1, "No feel good", "Medicade", 0, "type", "good");
+
+INSERT INTO perscription (doc_id,patient_id, start_Date, Rx_Numb, refill, script, description, expiration) 
+	VALUES(1, 1, '2018-04-20', 1, 0, "Cough Medicine", "This is cough medicine", '2018-06-20');
 
 INSERT INTO reminders (reminder_id,notification_type, _date, reminder) 
 	VALUES(1, "Email", '2018-04-20', "You have an appt coming up!");
-
-INSERT INTO DocNote (dir_id,doc_id, patient_id, note) 
-	VALUES(1, 1, 1, "Take the medicine twice a day!");
+    
+INSERT INTO DocNote (doc_id, patient_id, note, beenDisplayed) 
+	VALUES(1, 1, "Take the medicine twice a day!", 1);
 
 */
 
