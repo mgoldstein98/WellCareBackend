@@ -479,7 +479,7 @@ server.route({
     const username = request.payload.username;
     const password = request.payload.password;
 
-    console.log(username, password);
+    // console.log(username, password);
 
     return new Promise(function(resolve, reject) {
       var sql = "SELECT * FROM User WHERE username = '" + username + "';";
@@ -490,7 +490,7 @@ server.route({
           resolve(reply.response("404: User not added"));
         }
         else {
-          console.log(result);
+          // console.log(result);
           var pass = result[0].password;
           if(password === pass)
             if(result[0].isDoc === 1)
@@ -573,7 +573,7 @@ server.route({
 
 server.route({
   method: 'POST',
-  path: '/patient',
+  path: '/_patient-profile',
   handler: function(request, reply) {
     return new Promise(function(resolve, reject) {
 
