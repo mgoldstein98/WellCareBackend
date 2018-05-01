@@ -145,11 +145,12 @@ server.route({
 //gets doctor attributes by given ID
 server.route({
   method: 'POST',
-  path: '/doctor',
+  path: '/_doctor-profile',
   handler: function(request, reply) {
     return new Promise(function(resolve, reject) {
 
-      const doc_id = request.payload.doc_id;
+      const doc_id = request.payload.username;
+
       var sql = "SELECT * FROM doctor WHERE doc_id = " + doc_id + ";";
 
       mysqlCon.query(sql, function (err, result) {
@@ -171,11 +172,11 @@ server.route({
 //gets doctor attributes by given ID
 server.route({
   method: 'POST',
-  path: '/patient',
+  path: '/_patient-profile',
   handler: function(request, reply) {
     return new Promise(function(resolve, reject) {
 
-      const patient_id = request.payload.patient_id;
+      const patient_id = request.payload.username;
       var sql = "SELECT * FROM patient WHERE patient_id = " + patient_id + ";";
 
       mysqlCon.query(sql, function (err, result) {
