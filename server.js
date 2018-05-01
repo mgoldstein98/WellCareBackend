@@ -229,27 +229,6 @@ server.route({
   }
 });
 
-//update to appts table, changes appt time (hardcoded)
-server.route({
-  method: 'PUT',
-  path: '/wellcare/updateAppointments',
-  handler: function(request, reply){
-
-      return new Promise(function(resolve, reject){
-
-        mysqlCon.query("UPDATE Appointment INNER JOIN patient ON Appointment.user_id = patient.patient_id SET A_Time = '14:00' WHERE Appointment.user_id = patient.patient_id", function (error, results, fields) {
-
-          if (error) throw error;
-
-          console.log(results.affectedRows + " record(s) updated"); 
-
-          resolve(reply.response(results.affectedRows + " record(s) updated"));
-
-        })
-    });
-  }
-});
-
 //gets reason for appt
 server.route({
   method: 'GET',
@@ -541,6 +520,35 @@ server.route({
   }
 });
 
+//gets all doctor perscriptions given an ID
+server.route({
+  method: 'POST',
+  path: '/appointments/patient',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      const pat_id = request.payload.username;
+
+      var sql = "SELECT * FROM Appointment WHERE user_id = " + pat_id + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+
+        else {
+          console.log(result[0]);
+
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+        }
+      });
+    });
+  }
+});
+
 //gets all patient perscription given an ID
 server.route({
   method: 'POST',
@@ -664,7 +672,7 @@ server.route({
   handler: function(request, reply) {
     return new Promise(function(resolve, reject) {
 
-      const patient_id = request.payload.patient_id;
+      const patient_id = request.payload.username;
 
       var sql = "SELECT * FROM Notification WHERE patient_id = " + patient_id + ";";
 
