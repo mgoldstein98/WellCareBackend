@@ -482,7 +482,7 @@ server.route({
     const username = request.payload.username;
     const password = request.payload.password;
 
-    // console.log(username, password);
+    console.log(username, password);
 
     return new Promise(function(resolve, reject) {
       var sql = "SELECT * FROM User WHERE username = '" + username + "';";
@@ -493,7 +493,7 @@ server.route({
           resolve(reply.response("404: User not added"));
         }
         else {
-          // console.log(result);
+          console.log(result);
           var pass = result[0].password;
           if(password === pass)
             if(result[0].isDoc === 1)
@@ -578,12 +578,12 @@ server.route({
   method: 'POST',
   path: '/_patient-profile',
   handler: function(request, reply) {
-    console.log(request);
+    console.log(request.arguments);
     return new Promise(function(resolve, reject) {
       console.log("XXXXXXX");
-      const patient_id = request.payload.username;
-      console.log(patient_id);
-      var sql = "SELECT * FROM patient WHERE patient_id = " + patient_id + ";";
+      const username = request.payload.username;
+      console.log(username);
+      var sql = "SELECT * FROM patient WHERE username = '" + username + "';";
 
       mysqlCon.query(sql, function (err, result) {
         if (err) {
@@ -620,29 +620,6 @@ server.route({
   }
 });
 
-server.route({
-  method: 'POST',
-  path: '/docnotes/patient',
-  handler: function(request, reply) {
-
-    return new Promise(function(resolve, reject) {
-
-      const patient_id = request.payload.username;
-
-      var sql = "SELECT * FROM DocNote WHERE patient_id = " + patient_id + ";";
-      mysqlCon.query(sql, function (err, result) {
-
-        if (err) {
-          throw err;
-          resolve(reply.response("404: User not added"));
-        } else {
-          console.log(result[0]);
-          resolve(reply.response(JSON.stringify(result[0])));
-        }
-      });
-    });
-  }
-});
 
 server.route({
   method: 'POST',
@@ -650,7 +627,7 @@ server.route({
   handler: function(request, reply) {
     return new Promise(function(resolve, reject) {
 
-      const patient_id = request.payload.username;
+      const patient_id = request.payload.patient_id;
 
       var sql = "SELECT * FROM prescription WHERE patient_id = " + patient_id + ";";
 
@@ -671,6 +648,284 @@ server.route({
     });
   }
 });
+
+server.route({
+  method: 'POST',
+  path: '/notifications/patient',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      const patient_id = request.payload.patient_id;
+
+      var sql = "SELECT * FROM Notification WHERE patient_id = " + patient_id + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+
+        else {
+          console.log(result[0]);
+
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+        }
+      });
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/perscriptions/patient',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      const patient_id = request.payload.patient_id;
+      console.log(patient_id);
+
+      var sql = "SELECT * FROM prescription WHERE patient_id = " + patient_id + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+
+        else {
+          console.log(result[0]);
+
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+        }
+      });
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/appointments/patient',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      const patient_id = request.payload.patient_id;
+
+      var sql = "SELECT * FROM Appointment WHERE patient_id = " + patient_id + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+
+        else {
+          console.log(result[0]);
+
+          resolve(reply.response(JSON.stringify(result)));
+            
+        }
+      });
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/docnotes/patient',
+  handler: function(request, reply) {
+    console.log(request.payload.patient_id + " ****");
+    return new Promise(function(resolve, reject) {
+      const patient_id = request.payload.patient_id;
+      console.log(patient_id);
+      var sql = "SELECT * FROM DocNote WHERE patient_id = " + patient_id + ";";
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        } else {
+          console.log(result[0]);
+          resolve(reply.response(JSON.stringify(result[0])));
+        }
+      });
+    });
+  }
+});
+
+// ///////////////// Doctor Routes ///////////////////////////
+server.route({
+  method: 'POST',
+  path: '/_doc-profile',
+  handler: function(request, reply) {
+    console.log(request.arguments);
+    return new Promise(function(resolve, reject) {
+      console.log("XXXXXXX");
+      const username = request.payload.username;
+      console.log(username);
+      var sql = "SELECT * FROM doctor WHERE username = '" + username + "';";
+
+      mysqlCon.query(sql, function (err, result) {
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+        else {
+          console.log(result[0]);
+
+          // var pass = result[0].password;
+          // if(password === pass)
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+          // else
+          //   resolve(reply.response(JSON.stringify('Login Failed')));
+        }
+      });
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/docnotes/doctor',
+  handler: function(request, reply) {
+    console.log(request.payload.doc_id + " ****");
+    return new Promise(function(resolve, reject) {
+      const doc_id = request.payload.doc_id;
+      console.log(patient_id);
+
+      var sql = "SELECT * FROM DocNote WHERE doc_id = " + doc_id + ";";
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        } else {
+          console.log(result[0]);
+          resolve(reply.response(JSON.stringify(result[0])));
+        }
+      });
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/prescription/doctor',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      const doc_id = request.payload.doc_id;
+
+      var sql = "SELECT * FROM prescription WHERE doc_id = " + doc_id + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+
+        else {
+          console.log(result[0]);
+
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+        }
+      });
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/notifications/doctor',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      const doc_id = request.payload.doc_id;
+
+      var sql = "SELECT * FROM Notification WHERE patient_id = " + doc_id + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+
+        else {
+          console.log(result[0]);
+
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+        }
+      });
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/perscriptions/doctor',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      const doc_id = request.payload.doc_id;
+      console.log(patient_id);
+
+      var sql = "SELECT * FROM prescription WHERE doc_id = " + doc_id + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+
+        else {
+          console.log(result[0]);
+
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+        }
+      });
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
+  path: '/appointments/doctor',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      const doc_id = request.payload.doc_id;
+
+      var sql = "SELECT * FROM Appointment WHERE doc_id = " + doc_id + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+
+        else {
+          console.log(result[0]);
+
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+        }
+      });
+    });
+  }
+});
+
 
 
 server
