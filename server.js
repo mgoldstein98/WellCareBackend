@@ -177,6 +177,7 @@ server.route({
     return new Promise(function(resolve, reject) {
 
       const patient_id = request.payload.username;
+      
       var sql = "SELECT * FROM patient WHERE patient_id = " + patient_id + ";";
 
       mysqlCon.query(sql, function (err, result) {

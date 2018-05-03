@@ -6,7 +6,7 @@ USE WellcareDB;
 
 
 Create TABLE IF NOT EXISTS patient(
-	patient_id int NOT NULL PRIMARY KEY,
+	patient_id int NOT NULL PRIMARY KEY auto_increment,
 	gender VARCHAR(255),
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -58,8 +58,8 @@ Create TABLE IF NOT EXISTS User (
 	A_Date date,
     A_Time time,
     appointment_id int generated always AS (A_Date + A_Time) STORED PRIMARY KEY,
-    doc_id int NOT NULL,
-    user_id int NOT NULL ,
+    doctor int NOT NULL,
+    patient int NOT NULL ,
     Reason VARCHAR(255),
     insurance VARCHAR(255),
     newPatient int,
@@ -408,6 +408,10 @@ INSERT INTO reminders (reminder_id,notification_type, _date, reminder)
     
 INSERT INTO DocNote (doc_id, patient_id, note, beenDisplayed) 
 	VALUES(1, 1, "Take the medicine twice a day!", 1);
+
+INSERT INTO Notification (A_date, message, beenDisplayed, doc_id, patient_id) 
+	VALUES('2018-04-20', "Heres a notification", 1, 1,1);
+    
 
 */
 
