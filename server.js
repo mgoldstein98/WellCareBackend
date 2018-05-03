@@ -170,13 +170,13 @@ server.route({
 
 //Route for managing an appointment 
 server.route({
-  method: 'GET',
-  path: '/wellcare/manageAppointments',
+  method: 'POST',
+  path: '/patient/myDocs',
   handler: function(request, reply){
-
+      const PatientId = request.payload.patient_id;
       return new Promise(function(resolve, reject){
 
-        mysqlCon.query("SELECT Date, Time, Reason, FirstName, LastName, OfficeAddress FROM Appointment INNER JOIN Doctor ON Appointment.doc_id = Doctor.doc_id", function (error, results, fields) {
+        mysqlCon.query("SELECT doctor.* FROM Appointment INNER JOIN doctor ON Appointment.patient = " + PatientId + ";", function (error, results, fields) {
 
           if (error) throw error;
 
@@ -189,6 +189,7 @@ server.route({
   }
 });
 
+
 server.route({
   method: 'PUT',
   path: '/wellcare/updateAppointments',
@@ -196,7 +197,7 @@ server.route({
 
       return new Promise(function(resolve, reject){
 
-        mysqlCon.query("UPDATE Appointment INNER JOIN User ON Appointment.user_id = User.UserId SET Time = '12:20' WHERE Appointment.user_id = User.UserId", function (error, results, fields) {
+        mysqlCon.query("UPDATE Appointment INNER JOIN User ON Appointment.doctor = User.UserId SET Time = '12:20' WHERE Appointment.user_id = User.UserId", function (error, results, fields) {
 
           if (error) throw error;
 
@@ -682,11 +683,10 @@ server.route({
   path: '/perscriptions/patient',
   handler: function(request, reply) {
     return new Promise(function(resolve, reject) {
-
       const patient_id = request.payload.patient_id;
       console.log(patient_id);
 
-      var sql = "SELECT * FROM prescription WHERE patient_id = " + patient_id + ";";
+      var sql = "SELECT * FROM prescription WHERE patient = " + patient_id + ";";
 
       mysqlCon.query(sql, function (err, result) {
 
@@ -696,7 +696,7 @@ server.route({
         }
 
         else {
-          console.log(result[0]);
+          console.log(result);
 
           resolve(reply.response(JSON.stringify(result[0])));
             
@@ -714,7 +714,7 @@ server.route({
 
       const patient_id = request.payload.patient_id;
 
-      var sql = "SELECT * FROM Appointment WHERE patient_id = " + patient_id + ";";
+      var sql = "SELECT * FROM Appointment WHERE patient = " + patient_id + ";";
 
       mysqlCon.query(sql, function (err, result) {
 
@@ -768,6 +768,36 @@ server.route({
       const username = request.payload.username;
       console.log(username);
       var sql = "SELECT * FROM doctor WHERE username = '" + username + "';";
+
+      mysqlCon.query(sql, function (err, result) {
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+        else {
+          console.log(result[0]);
+
+          // var pass = result[0].password;
+          // if(password === pass)
+          resolve(reply.response(JSON.stringify(result[0])));
+            
+          // else
+          //   resolve(reply.response(JSON.stringify('Login Failed')));
+        }
+      });
+    });
+  }
+});
+server.route({
+  method: 'POST',
+  path: '/_doc-profile/byId',
+  handler: function(request, reply) {
+    console.log(request.arguments);
+    return new Promise(function(resolve, reject) {
+      console.log("XXXXXXX");
+      const doc_id = request.payload.doc_id;
+      console.log(doc_id);
+      var sql = "SELECT * FROM doctor WHERE doc_id = " + doc_id + ";";
 
       mysqlCon.query(sql, function (err, result) {
         if (err) {
@@ -906,7 +936,7 @@ server.route({
 
       const doc_id = request.payload.doc_id;
 
-      var sql = "SELECT * FROM Appointment WHERE doc_id = " + doc_id + ";";
+      var sql = "SELECT * FROM Appointment WHERE doctor = " + doc_id + ";";
 
       mysqlCon.query(sql, function (err, result) {
 
