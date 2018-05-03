@@ -658,8 +658,8 @@ server.route({
 
       const patient_id = request.payload.patient_id;
 
-      var sql = "SELECT * FROM Notification WHERE patient_id = " + patient_id + ";";
-
+      // var sql = "SELECT * FROM Notification WHERE patient = " + patient_id + ";";
+      var sql = "SELECT Notification.*, firstName as DocFirstName, lastName as DocLastName, address as DocAddress FROM Notification INNER JOIN doctor ON Notification.patient =" + patient_id + ";"
       mysqlCon.query(sql, function (err, result) {
 
         if (err) {
