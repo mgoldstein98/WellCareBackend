@@ -81,19 +81,24 @@ server.route({
 
 server.route({
   method: 'POST',
-  path: '/user/makeAppt',
+  path: '/docAppt',
   handler: function(request, reply) {
-    
-    const appointmentID = request.payload.appointmentID;
-    const doc_id = request.payload.doc_id;
-    const user_id = request.payload.user_id;
-    const Date = request.payload.Date;
-    const Time = request.payload.Time ;
-    const Reason = request.payload.Reason;
+    console.log(request.payload.doctor);
+    console.log(request.payload.patient);
+    //const appt_id = 100;
+    const doc_id = request.payload.doctor;
+    const user_id = request.payload.patient;
+    const date = request.payload.date;
+    const Time = request.payload.time ;
+    const Reason = request.payload.reason;
+    const type = request.payload.type;
+    const status = request.payload.status;
+    const newPatient = request.payload.newPatient;
+    const insurance = request.payload.insurance;
    
     return new Promise(function(resolve, reject) {
-      var sql = 'INSERT INTO Appointment (appointmentID, doc_id, user_id, Date, Time, Reason) VALUES(' + appointmentID + ',' + "'" + doc_id + "'" + ','
-      + "'" + user_id + "'" + ',' + "'" + Date + "'" + ',' + "'" + Time + "'" + ',' + "'" + Reason +  "'" + ')';
+      var sql = 'INSERT INTO Appointment (doctor, patient, date, time, reason, insurance, type, status, newPatient) VALUES(' + doc_id + ','
+       + user_id  + ',' + "'" + date + "'" + ',' + "'" + Time + "'" + ',' + "'" + Reason +  "'" + ',' + "'"+  insurance +  "'" + ',' + "'" + type + "'" + ',' + "'" + status + "'" + ',' + 0 + ');';
       mysqlCon.query(sql, function (err, result) {
         if (err) {
           throw err;
@@ -120,6 +125,29 @@ server.route({
       return new Promise(function(resolve, reject){
 
         mysqlCon.query("SELECT * FROM User", function (error, results, fields) {
+
+          if (error) throw error;
+
+          console.log(results); 
+
+          resolve(reply.response(results));
+
+        })
+    });
+  }
+});
+
+//Route for returning all users
+server.route({
+  method: 'GET',
+  path: '/getAllDoctors',
+
+  //returns all doc data
+  handler: function(request, reply){
+
+      return new Promise(function(resolve, reject){
+
+        mysqlCon.query("SELECT * FROM doctor", function (error, results, fields) {
 
           if (error) throw error;
 
@@ -949,6 +977,33 @@ server.route({
           console.log(result[0]);
 
           resolve(reply.response(JSON.stringify(result[0])));
+            
+        }
+      });
+    });
+  }
+});
+server.route({
+  method: 'POST',
+  path: '/appointments/doc',
+  handler: function(request, reply) {
+    return new Promise(function(resolve, reject) {
+
+      const doc_id = request.payload.doc_id;
+
+      var sql = "SELECT * FROM Appointment WHERE doctor = " + doc_id + ";";
+
+      mysqlCon.query(sql, function (err, result) {
+
+        if (err) {
+          throw err;
+          resolve(reply.response("404: User not added"));
+        }
+
+        else {
+          console.log(result);
+
+          resolve(reply.response(JSON.stringify(result)));
             
         }
       });
