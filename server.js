@@ -698,7 +698,7 @@ server.route({
         else {
           console.log(result);
 
-          resolve(reply.response(JSON.stringify(result[0])));
+          resolve(reply.response(JSON.stringify(result)));
             
         }
       });
@@ -749,8 +749,8 @@ server.route({
           throw err;
           resolve(reply.response("404: User not added"));
         } else {
-          console.log(result[0]);
-          resolve(reply.response(JSON.stringify(result[0])));
+          console.log(result);
+          resolve(reply.response(JSON.stringify(result)));
         }
       });
     });
